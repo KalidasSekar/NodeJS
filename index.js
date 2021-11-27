@@ -5,7 +5,7 @@ import express from "express"; //type module should be "module"
 
 const app = express();
 
-const PORT = 9000;
+const PORT = process.env.PORT || 9000; //Heroku will auto asign the PORT
 
 const movies = [
     {
