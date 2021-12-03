@@ -1,122 +1,129 @@
 // const express = require("express"); //type module should be "commonjs"
 import express from "express"; //type module should be "module"
-
+import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 //either require works or import works together it's not work.
+dotenv.config();
 
 const app = express();
 
+// One stop solution - to parse all the request as JSON
+// One stop solution - middleware
+
+app.use(express.json()); // parse body to JSON
+
 const PORT = process.env.PORT || 9000; //Heroku will auto asign the PORT
+//process.env
+const MONGO_URL = process.env.MONGO_URL;
 
-const movies = [
-    {
-        id: "1",
-        movie_name: "The Shawshank Redemption (1994)",
-        pic: "https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_QL75_UX190_CR0,0,190,281_.jpg",
-        rating: 9.2,
-        discription: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-        trailer: "https://www.youtube.com/embed/NmzuHjWmXOc"
-    },
+// mongodb + srv://kalidas_2021:<password>@cluster0.8as6j.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 
-    {
-        id: "2",
-        movie_name: "The Godfather (1972)",
-        pic: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-        rating: 9.1,
-        discription: "An organized crime dynasty's aging patriarch transfers control of his clandestine empire to his reluctant son.",
-        trailer: "https://www.youtube.com/embed/1x0GpEZnwa8"
-    },
-
-    {
-        id: "3",
-        movie_name: "The Dark Knight (2008)",
-        pic: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg",
-        rating: 9.1,
-        discription: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-        trailer: "https://www.youtube.com/embed/EXeTwQWrcwY"
-    },
-
-    {
-        id: "4",
-        movie_name: "12 Angry Men (1957)",
-        pic: "https://upload.wikimedia.org/wikipedia/commons/b/b5/12_Angry_Men_%281957_film_poster%29.jpg",
-        rating: 9.0,
-        discription: "A jury holdout attempts to prevent a miscarriage of justice by forcing his colleagues to reconsider the evidence.",
-        trailer: "https://www.youtube.com/embed/_13J_9B5jEk"
-    },
-
-    {
-        id: "5",
-        movie_name: "Schindler's List (1993)",
-        pic: "https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
-        rating: 9.0,
-        discription: "In German-occupied Poland during World War II, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
-        trailer: "https://www.youtube.com/embed/gG22XNhtnoY"
-    },
-
-    {
-        id: "6",
-        movie_name: "The Lord of the Rings: The Return of the King (2003)",
-        pic: "https://flxt.tmsimg.com/assets/p33156_p_v10_ab.jpg",
-        rating: 8.9,
-        discription: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
-        trailer: "https://www.youtube.com/embed/r5X-hFf6Bwo"
-    },
-
-    {
-        id: "7",
-        movie_name: "Pulp Fiction (1994)",
-        pic: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-        rating: 8.8,
-        discription: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
-        trailer: "https://www.youtube.com/embed/5ZAhzsi1ybM"
-    },
-
-    {
-        id: "8",
-        movie_name: "The Good, the Bad and the Ugly (1966)",
-        pic: "https://m.media-amazon.com/images/M/MV5BOTQ5NDI3MTI4MF5BMl5BanBnXkFtZTgwNDQ4ODE5MDE@._V1_.jpg",
-        rating: 8.8,
-        discription: "A bounty hunting scam joins two men in an uneasy alliance against a third in a race to find a fortune in gold buried in a remote cemetery.",
-        trailer: "https://www.youtube.com/embed/WCN5JJY_wiA"
-    },
-
-    {
-        id: "9",
-        movie_name: "Fight Club (1999)",
-        pic: "https://m.media-amazon.com/images/M/MV5BMmEzNTkxYjQtZTc0MC00YTVjLTg5ZTEtZWMwOWVlYzY0NWIwXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-        rating: 8.8,
-        discription: "An insomniac office worker and a devil-may-care soap maker form an underground fight club that evolves into much more.",
-        trailer: "https://www.youtube.com/embed/qtRKdVHc-cE"
-    },
-
-    {
-        id: "10",
-        movie_name: "Inception (2010)",
-        pic: "https://flxt.tmsimg.com/assets/p7825626_p_v10_af.jpg",
-        rating: 8.7,
-        discription: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.",
-        trailer: "https://www.youtube.com/embed/YoHD9XEInc0"
-    },
-];
+async function createConnection() {
+    const client = new MongoClient(MONGO_URL);
+    await client.connect();
+    console.log("MongoDB Connected..! ");
+    return client;
+}
 
 app.get("/", (request, response) => {
     response.send("Hello World!!!");
 });
 
-app.get("/movies", (request, response) => {
-    response.send(movies);
+
+
+// app.get("/movies", (request, response) => {
+//     console.log(request.query);
+//     const { language, rating } = request.query;
+//     let filterMovies = movies;
+//     if (language) {
+//         filterMovies = filterMovies.filter((mv => mv.language === language));
+//     }
+//     if (rating) {
+//         filterMovies = filterMovies.filter((mv => mv.rating === + rating));
+//     }
+
+//     response.send(filterMovies);
+// });
+
+app.get("/movies", async (request, response) => {
+    let filter = request.query;
+
+    if (filter.rating) {
+        filter.rating = + filter.rating;
+    }
+
+    const client = await createConnection()
+    const filterMovies = await client
+        .db("firstdb")
+        .collection("movies")
+        .find(filter)
+        .toArray();//cursor to Array
+    response.send(filterMovies);
+    console.log(filterMovies);
 });
 
+//Cursor - pagination
+//find -20
+//it
+//top 10 1 2 3 4 - pagination
 
-app.get("/movies/:id", (request, response) => {
+
+app.get("/movies/:id", async (request, response) => {
     const { id } = request.params;
+    const client = await createConnection()
+
     // const movie = movies.filter((mv) => mv.id === id)[0];
-    const movie = movies.find((mv) => mv.id === id);
-    console.log(movie);
+    // const movie = movies.find((mv) => mv.id === id);
+    // console.log(movie);
+
+    const movie = await client
+        .db("firstdb")
+        .collection("movies")
+        .findOne({ id: id });
+
     const notFound = { message: "No matchig movie" };
+    console.log(movie);
     // movie ? response.send(movie) : response.send(notFound);
     movie ? response.send(movie) : response.status(404).send(notFound);
 
+});
+
+app.post("/movies", async (request, response) => {
+    // console.log(request.params);
+    const data = request.body;
+    console.log(data);
+    const client = await createConnection()
+
+    const createMovies = await client
+        .db("firstdb")
+        .collection("movies")
+        .insertMany(data);
+    response.send(createMovies);
+});
+
+app.delete("/movies/:id", async (request, response) => {
+    const { id } = request.params;
+    const client = await createConnection()
+
+    const deleteMovies = await client
+        .db("firstdb")
+        .collection("movies")
+        .deleteOne({ id: id });
+    response.send(deleteMovies);
+});
+
+app.put("/movies/:id", async (request, response) => {
+    // console.log(request.params);
+    const { id } = request.params;
+    const data = request.body;
+    const client = await createConnection()
+
+    const updateMovies = await client
+        .db("firstdb")
+        .collection("movies")
+        .updateOne({ id: id }, { $set: data });
+    console.log(data, "has been changed");
+    response.send(updateMovies);
 });
 
 app.listen(PORT, () => console.log("App is started on", PORT));
