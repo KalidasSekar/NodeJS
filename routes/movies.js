@@ -1,9 +1,15 @@
 import express from "express";
+import {
+    getAllMovies,
+    getMoviesById,
+    createMovies,
+    deleteMoviesById,
+    editMovies
+} from "../helper.js";
 const router = express.Router();
 
-//related to movies
 
-app.get("/movies", async (request, response) => {
+router.get("/", async (request, response) => {
     let filter = request.query;
 
     if (filter.rating) {
@@ -15,13 +21,8 @@ app.get("/movies", async (request, response) => {
     console.log(filterMovies);
 });
 
-//Cursor - pagination
-//find -20
-//it
-//top 10 1 2 3 4 - pagination
 
-
-app.get("/movies/:id", async (request, response) => {
+router.get("/:id", async (request, response) => {
     const { id } = request.params;
     const client = await createConnection()
 
@@ -38,7 +39,7 @@ app.get("/movies/:id", async (request, response) => {
 
 });
 
-app.post("/movies", async (request, response) => {
+router.post("/", async (request, response) => {
     // console.log(request.params);
     const data = request.body;
     console.log(data);
@@ -48,7 +49,7 @@ app.post("/movies", async (request, response) => {
     response.send(result);
 });
 
-app.delete("/movies/:id", async (request, response) => {
+router.delete("/:id", async (request, response) => {
     const { id } = request.params;
     const client = await createConnection()
 
@@ -56,7 +57,7 @@ app.delete("/movies/:id", async (request, response) => {
     response.send(deleteMovies);
 });
 
-app.put("/movies/:id", async (request, response) => {
+router.put("/:id", async (request, response) => {
     // console.log(request.params);
     const { id } = request.params;
     const data = request.body;
@@ -66,3 +67,6 @@ app.put("/movies/:id", async (request, response) => {
 
     response.send(updateMovies);
 });
+
+export const moviesRouter = router;
+
