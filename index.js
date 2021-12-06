@@ -5,11 +5,12 @@ import { moviesRouter } from "./routes/movies.js";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+
 
 const PORT = process.env.PORT || 7000;
 
 const MONGO_URL = process.env.MONGO_URL;
+app.use(express.json());
 
 async function createConnection() {
     const client = new MongoClient(MONGO_URL);
