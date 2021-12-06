@@ -1,31 +1,31 @@
 import { client } from "./index.js";
 
-async function getAllMovies(filter) {
+async function getMovies(filter) {
     return await client
         .db("firstdb")
         .collection("movies")
         .find(filter)
-        .toArray(); //cursor to Array
+        .toArray();
 }
-async function getMoviesById(client, id) {
+async function getMoviesById(id) {
     return await client
         .db("firstdb")
         .collection("movies")
         .findOne({ id: id });
 }
-async function createMovies(client, data) {
+async function createMovies(data) {
     return await client
         .db("firstdb")
         .collection("movies")
         .insertMany(data);
 }
-async function deleteMoviesById(client, id) {
+async function deleteMoviesById(id) {
     return await client
         .db("firstdb")
         .collection("movies")
         .deleteOne({ id: id });
 }
-async function editMovies(client, id, data) {
+async function editMovies(id, data) {
     return await client
         .db("firstdb")
         .collection("movies")
@@ -33,7 +33,7 @@ async function editMovies(client, id, data) {
 }
 
 export {
-    getAllMovies,
+    getMovies,
     getMoviesById,
     createMovies,
     deleteMoviesById,
