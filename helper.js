@@ -1,6 +1,4 @@
-import { createConnection } from "./index.js";
-
-
+import { client } from "./index.js";
 
 async function getAllMovies(filter) {
     const client = await createConnection();
@@ -41,5 +39,5 @@ export {
     getMoviesById,
     createMovies,
     deleteMoviesById,
-    editMovies
+    editMovies,
 };
