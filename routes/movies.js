@@ -1,11 +1,5 @@
 import express from "express";
-import {
-    getMovies,
-    getMoviesById,
-    createMovies,
-    deleteMoviesById,
-    editMovies
-} from "../helper.js";
+import { getMovies, getMoviesById, createMovies, deleteMoviesById, editMovies } from "../helper.js";
 
 const router = express.Router();
 
