@@ -1,4 +1,4 @@
-import { client } from "./index.js";
+import { createConnection } from "./index.js";
 
 async function getAllMovies(filter) {
     const client = await createConnection();
