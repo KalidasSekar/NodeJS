@@ -26,7 +26,6 @@ export async function createConnection() {
     return client;
 }
 
-export const createConnection = await client();
 
 app.get("/", (request, response) => {
     response.send("Hello World!!!");
