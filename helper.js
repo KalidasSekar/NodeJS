@@ -1,13 +1,11 @@
-import { createConnection } from "./index.js";
+import { client } from "./index.js";
 
 async function getAllMovies(filter) {
-    const client = await createConnection();
-    const filterMovies = await client
+    return await client
         .db("firstdb")
         .collection("movies")
         .find(filter)
         .toArray(); //cursor to Array
-    return filterMovies;
 }
 async function getMoviesById(client, id) {
     return await client
